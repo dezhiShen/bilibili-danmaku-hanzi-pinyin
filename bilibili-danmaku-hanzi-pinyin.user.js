@@ -2,7 +2,7 @@
 // @name         bilibili弹幕汉字生成拼音
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  为bilibili的弹幕添加拼音 add pinyin for danmaku of bilibli
+// @description  try to take over the world!
 // @author       dezhi.shen
 // @match        *://live.bilibili.com/*
 // @grant        none
@@ -386,27 +386,27 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
 });
 (function() {
     'use strict';
-    let ucts = {};
+    let textCache = {};
     // 当观察到突变时执行的回调函数
     let callback = function(mutationsList) {
         mutationsList.forEach(function(item,index){
             if (item.type == 'childList') {
-                console.log('有节点发生改变，当前节点的内容是：');
                 let childrenNodes = item.target.children;
-                for(let i =0 ;i<childrenNodes.length;i++){
-                    let e = childrenNodes[i];
-                    let ct = e.getAttribute("data-ct");
-                    let span = document.getElementById("span-"+ct)
-                    if(!span){
-                        let text = e.getAttribute("data-danmaku");
-                        let pinyins = pinyinUtil.getPinyin(text, ' ', true, true);
-                        if (pinyins){
-                            ucts[ct] = true;
-                            let span = document.createElement("span")
-                            span.id = "span-"+ct
-                            span.innerHTML = " [ "+pinyins[0]+" ]"
-                            e.appendChild(span)
-                        }
+                let e = childrenNodes[childrenNodes.length-1];
+                let ct = e.getAttribute("data-ct");
+                let span = document.getElementById("span-"+ct)
+                if(!span){
+                    let text = e.getAttribute("data-danmaku");
+                    let pinyins = textCache[text]
+                    if (!pinyins){
+                       pinyins = pinyinUtil.getPinyin(text, ' ', true, true);
+                       textCache[text] = pinyins;
+                    }
+                    if (pinyins){
+                        let span = document.createElement("span")
+                        span.id = "span-"+ct
+                        span.innerHTML = " [ "+pinyins[0]+" ]"
+                        e.appendChild(span)
                     }
                 }
             }
@@ -420,6 +420,20 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
     let config = { attributes: false, childList: true, subtree: false };
     // 开始观察已配置突变的目标节点
     observer.observe(targetNode, config);
+    let sleep = function (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+    let clearCache = async function(){
+        while(true){
+            await sleep(10000);
+            textCache = {};
+        }
+    }
+    clearCache();
+
+// 用法
+
+
     // 停止观察
     //observer.disconnect();
     // Your code here...
