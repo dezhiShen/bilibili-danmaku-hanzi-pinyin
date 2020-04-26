@@ -1,6 +1,8 @@
 # bilibili-danmuku-hanzi-pinyin
 A script of [https://www.tampermonkey.net/](https://www.tampermonkey.net/)
-英文|[中文](./README_zh.md)
+
+English|[中文](./README_zh.md)
+
 ## Function
 Add pinyin to bilibili Chinese characters danmuku
 ## Instructions for use
