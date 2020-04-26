@@ -4,7 +4,7 @@ A script of [https://www.tampermonkey.net/](https://www.tampermonkey.net/)
 English|[中文](./README_zh.md)
 
 ## Function
-Add pinyin to bilibili Chinese characters danmuku
+Add pinyin to bilibili live Chinese characters danmuku
 
 ![](images/display.png)
 ## Instructions for use
