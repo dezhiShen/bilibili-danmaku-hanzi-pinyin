@@ -6,7 +6,7 @@ English|[中文](./README_zh.md)
 ## Function
 Add pinyin to bilibili Chinese characters danmuku
 
-![](.images/display.png)
+![](images/display.png)
 ## Instructions for use
 * Install `tampermonkey` in your browser
   * There are the home page of `tampermonkey`[tampermonkey](https://www.tampermonkey.net/)
