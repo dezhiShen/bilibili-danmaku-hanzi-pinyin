@@ -421,7 +421,7 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
                         console.log("命中率为:",cacheCount/(cacheCount+unCacheCount))
                         cacheCount = 0;
                         unCacheCount = 0;
-                        textCache=new Map();
+                        textCache.clear();
                     }
                 }
             }
@@ -433,16 +433,6 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
     let observer = new MutationObserver(callback);
     // 观察者的选项(要观察哪些突变)
     let config = { attributes: false, childList: true, subtree: false };
-    let sleep = function (time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-    }
-    let clearCache = async function(){
-        while(true){
-            await sleep(5000);
-            textCache={};
-        }
-    }
-    //clearCache();
     // 开始观察已配置突变的目标节点
     observer.observe(targetNode, config);
 
