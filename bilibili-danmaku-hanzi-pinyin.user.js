@@ -386,8 +386,10 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
 });
 (function() {
     'use strict';
-    let textCache = {};
     // 当观察到突变时执行的回调函数
+    let textCache = new Map();
+    let cacheCount = 0;
+    let unCacheCount = 0;
     let callback = function(mutationsList) {
         mutationsList.forEach(function(item,index){
             if (item.type == 'childList') {
@@ -397,16 +399,29 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
                 let span = document.getElementById("span-"+ct)
                 if(!span){
                     let text = e.getAttribute("data-danmaku");
-                    let pinyins = textCache[text]
-                    if (!pinyins){
-                       pinyins = pinyinUtil.getPinyin(text, ' ', true, true);
-                       textCache[text] = pinyins;
+                    let pinyin = textCache.get(text);
+                    if (!pinyin){
+                        let pinyins = pinyinUtil.getPinyin(text, ' ', true, true);
+                        if(pinyins&&pinyins.length>0){
+                           pinyin = pinyins[0];
+                           textCache.set(text,pinyin)
+                        }
+                        unCacheCount++;
+                    }else{
+                        cacheCount++;
                     }
-                    if (pinyins){
+                    if (pinyin){
                         let span = document.createElement("span")
                         span.id = "span-"+ct
-                        span.innerHTML = " [ "+pinyins[0]+" ]"
+                        span.innerHTML = " [ "+pinyin+" ]"
                         e.appendChild(span)
+                    }
+                    if(textCache.size>100){
+                        console.log("命中:",cacheCount,"总数:",(cacheCount+unCacheCount))
+                        console.log("命中率为:",cacheCount/(cacheCount+unCacheCount))
+                        cacheCount = 0;
+                        unCacheCount = 0;
+                        textCache=new Map();
                     }
                 }
             }
@@ -418,18 +433,18 @@ window.pinyin_dict_notone = {"a":"阿啊呵腌嗄吖锕","e":"额阿俄恶鹅遏
     let observer = new MutationObserver(callback);
     // 观察者的选项(要观察哪些突变)
     let config = { attributes: false, childList: true, subtree: false };
-    // 开始观察已配置突变的目标节点
-    observer.observe(targetNode, config);
     let sleep = function (time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
     let clearCache = async function(){
         while(true){
-            await sleep(10000);
-            textCache = {};
+            await sleep(5000);
+            textCache={};
         }
     }
-    clearCache();
+    //clearCache();
+    // 开始观察已配置突变的目标节点
+    observer.observe(targetNode, config);
 
 // 用法
 
